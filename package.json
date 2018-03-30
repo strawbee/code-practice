@@ -1,0 +1,15 @@
+{
+  "name": "cracking-the-coding-interview",
+  "version": "1.0.0",
+  "description": "This is my attempt at solving the problems in Cracking the Coding Interview, 6th Edition, by Gayle Laakmann McDowell. I am starting this endeavor in the second half of my 401 JavaScript course at Code Fellows.",
+  "main": "01-arrays-and-strings.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint ."
+  },
+  "author": "Joy Hou",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^4.18.2"
+  }
+}
