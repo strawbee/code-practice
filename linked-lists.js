@@ -1,3 +1,5 @@
+/** Linked Lists: Problems from Cracking the Coding Interview, 6th Ed, by Gayle Laakmann McDowell. */
+
 'use strict';
 
 class Node {

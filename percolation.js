@@ -1,6 +1,6 @@
-'use strict';
+/** Problem domain from Princeton's Coursera algorithms course, part I. */
 
-class Percolation {
+class Percolation { // eslint-disable-line
 
   /**
    * Initialize with an n * n grid of all closed sites

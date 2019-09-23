@@ -1,5 +1,5 @@
 'use strict';
-// Skipping graph questions
+/** Trees: Problems from Cracking the Coding Interview, 6th Ed, by Gayle Laakmann McDowell. */
 
 // =============================== TREE DATA STRUCTURE =============================== //
 class Node {
@@ -59,7 +59,7 @@ module.exports = class BST {
     if (value < node.value) return this.remove(value, node.left, node);
     else return this.remove(value, node.right, node);
   }
-  
+
   _remove(node, parent) {
     if (!node.left && !node.right) {
       if (!parent) this.root = null;
@@ -165,7 +165,7 @@ const isBST = tree => {
   let result = true;
   function _traverseDaTree(node) {
     if (node.left) {
-      if (node.value > node.left.value) 
+      if (node.value > node.left.value)
         _traverseDaTree(node.left);
       else {
         result = false;
@@ -173,10 +173,10 @@ const isBST = tree => {
       }
     }
     if (node.right) {
-      if (node.value < node.right.value) 
+      if (node.value < node.right.value)
         _traverseDaTree(node.right);
       else {
-        result = false;                                                                             
+        result = false;
         return;
       }
     }
@@ -191,7 +191,7 @@ const isBST = tree => {
 const firstCommonAncestor = (tree, node1, node2) => {
   function _traverseDaTree(node) {
     let leftTraverse, rightTraverse;
-    if (node === node1 || node === node2) return true; 
+    if (node === node1 || node === node2) return true;
     if (node.left) leftTraverse = _traverseDaTree(node.left);
     if (node.right) rightTraverse = _traverseDaTree(node.right);
     if (leftTraverse === true && rightTraverse === true) return node;
@@ -203,7 +203,7 @@ const firstCommonAncestor = (tree, node1, node2) => {
   return _traverseDaTree(tree.root);
 };
 
-/* 9. BST Sequences - A binary search tree was created by traversing through an array from left to right and inserting each element. Given a binary search tree with distinct elements, print all possible arrays that could have led to this tree. 
+/* 9. BST Sequences - A binary search tree was created by traversing through an array from left to right and inserting each element. Given a binary search tree with distinct elements, print all possible arrays that could have led to this tree.
 Example Input:
   1
  / \
@@ -211,7 +211,7 @@ Example Input:
 Output: [[1, 2, 3], [1, 3, 2]]
 */
 
-/* 10. Check Subtree - T1 and T2 are two very large binary trees, with T1 much bigger than T2. Create an algorithm to determine if T2 is a subtree of T1. 
+/* 10. Check Subtree - T1 and T2 are two very large binary trees, with T1 much bigger than T2. Create an algorithm to determine if T2 is a subtree of T1.
 A tree is a subtree of T1 if there exists a node n in T1 such that the subtree of n is identical to T2. That is, if you cut off the tree at node n, the two trees would be identical. */
 
 /* 11. Random Node - You are implementing a binary tree class from scratch which, in addition to insert, find, and delete, has a method getRandomNode() which returns a random node from the tree. All nodes should be equally likely to be chosen. Design and implement an algorithm for getRandomNode, and explain how you would implement the rest of the methods. */
