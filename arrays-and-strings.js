@@ -177,3 +177,21 @@ const isSubstring2 = (s1, s2) => {
   if (s1.includes(s2)) return true;
   return false;
 };
+
+
+
+// Find the smallest value in a cyclic sorted array
+const findSmallest = (arr) => {
+  let start = 0, end = arr.length - 1, mid = ~~((start + end)/ 2);
+
+  while (start < end) {
+    if (mid < end) {
+      end = mid;
+    } else {
+      start = mid;
+    }
+    mid = ~~((start + end) / 2);
+  }
+
+  return start;
+}

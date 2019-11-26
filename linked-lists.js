@@ -3,109 +3,148 @@
 'use strict';
 
 class Node {
-  constructor(value, next) {
+  constructor(value, next = null) {
     this.value = value;
-    this.next = next || null;
+    this.next = next;
   }
 }
 
-module.exports = class SLL {
+class SLL {
   constructor() {
     this.head = null;
+    this.tail = null;
+    this.length = 0;
   }
 
+  /**
+   * Inserts list head with value
+   * @param {*} value
+   * @returns {SLL}
+   */
   insertHead(value) {
-    this.head = new Node(value, this.head);
+    const node = new Node(value, this.head);
+    this.head = node;
+    if (!this.tail) this.tail = node;
+    this.length++;
+    return this;
   }
 
+  /**
+   * Inserts list tail with value
+   * @param {*} value
+   * @returns {SLL}
+   */
   insertTail(value) {
     let node = new Node(value);
     if (!this.head) {
       this.head = node;
+      this.tail = node;
       return;
     }
     let current = this.head;
     while (current.next) current = current.next;
     current.next = node;
+    this.tail = node;
+    this.length++;
+    return this;
   }
-};
 
-/* 1. Remove Dupes - Write code to remove duplicates from an unsorted linked list. How would you solve this problem if a termporary buffer is not allowed? */
-const removeDupes = list => {
-  let vals = {}, current = list.head;
-  vals[current.value] = true;
-  while (current.next) {
-    let prev = current;
-    current = current.next;
-    if (vals[current.value]) {
-      prev.next = current.next;
-      current = prev;
-    }
-    else vals[current.value] = true;
-  }
-  return list;
-};
+  /**
+   * Traverses and performs callback on each node
+   * @param {function} callback
+   */
+  traverse(callback) {
+    if (!this.length) return null;
 
-/* 2. Return Kth to Last - Implement an algorithm to find the kth to last element of a singly linked list. */
-// if 1 > 2 > 3 > 4, 3rd to last is 2.
-const kthToLast = (list, n) => {
-  let current = list.head, count = 1;
-  while (current.next) {
-    current = current.next;
-    count++;
-  }
-  let index = count - n;
-  count = 0; 
-  current = list.head;
-  while (current.next) {
-    if (index === count) return current;
-    current = current.next;
-    count++;
-  }
-  return null;
-};
-
-/* 3. Delete Middle Node - Implement an algorithm to delete a node in the middle (any node but first and last node, not necessarily exact middle) of a singly linked list, given only access to that node. */
-// input is that node c. Output is a->b->d->e.
-// I misread the problem domain but keeping it this way as deleting any node is pretty simple.
-const deleteNode = (node, list) => {
-  node.isNode = true;
-  if (list.head.isNode) {
-    list.head = list.head.next;
-    return list.head;
-  }
-  let current = list.head;
-  while (current.next) {
-    let prev = current;
-    current = current.next;
-    if (current.isNode) {
-      delete current.isNode;
-      prev.next = current.next;
-      return list.head;
+    let current = this.head;
+    callback(current);
+    while (current.next) {
+      current = current.next;
+      callback(current);
     }
   }
-  return null;
-};
 
-/* 4. Partition - Write code to partition a linked list around a value x, such that all nodes less than x come before all nodes greater than or equal to x. If x is contained within the list, the values of x only need to be after the elements less than x. The partition element x can appear anywhere in the "right partition"; it does not need to appear between the left and right partitions. */
-// Input: 3 -> 5 -> 8 -> 5 -> 10 -> 2 -> 1 (x = 5)
-// Sample Output: 3 -> 1 -> 2 -> 10 -> 5 -> 5 -> 8
-// My Output: 1 -> 2 -> 3 -> 5 -> 8 -> 5 -> 10
-const partition = (list, x) => {
-  let current = list.head;
-  while (current.next) {
-    let prev = current;
-    current = current.next;
-    if (current.value < x) {
-      list.insertHead(current.value);
-      prev.next = current.next;
-      current = prev;
+  /**
+   * Removes duplicates from the list
+   * @returns {SLL}
+   */
+  removeDuplicates() {
+    if (!this.length) return null;
+
+    const values = {}
+    let current = this.head;
+    values[current.value] = true;
+
+    while (current.next) {
+      const prev = current;
+      current = current.next;
+      if (values[current.value]) {
+        prev.next = current.next;
+        if (current === this.tail) this.tail = prev;
+        current = prev;
+        this.length--;
+      }
+      else values[current.value] = true;
     }
+
+    return this;
   }
-  return list;
+
+  /**
+   * Given a node in the list, delete it from the list
+   * @param {Node} node
+   * @returns {SLL|null}
+   */
+  deleteNode(node) {
+    if (!this.length) return null;
+
+    let current = this.head;
+    if (current === node) {
+      this.head = current.next;
+    }
+
+    while (current.next) {
+      const prev = current;
+      current = current.next;
+
+      if (current === node) {
+        prev.next = current.next;
+        this.length--;
+        if (current === this.tail) this.tail = prev;
+        return this;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Return the kth to last element.
+   * 1 > 2 > 3 > 4. The 3rd to last is 2.
+   * @param {Number} k
+   * @return {Node|null}
+   */
+  findKthToLast(k) {
+    let current = this.head;
+    let idx = this.length - k;
+    let current_idx = 0;
+
+    while (current) {
+      if (idx === current_idx) return current;
+      current = current.next;
+      current_idx++;
+    }
+
+    return null;
+  }
+
+
+
 };
 
-/* 5. Sum Lists - You have two numbers represented by a linked list, where each node contains a single digit. The digits are stored in reverse order, such that the 1's digit is at the head of the list. Write a function that adds the two numbers and returns the sum as a linked list. */
+/* Sum Lists - You have two numbers represented by a linked list, where each node
+contains a single digit. The digits are stored in reverse order, such that the 1's digit
+is at the head of the list. Write a function that adds the two numbers and returns the
+sum as a linked list. */
 // Input: (7 > 1 > 6) + (5 > 9 > 2). 617 + 295
 // Output: 2 > 1 > 9. 912.
 // Suppose the digits are stored in forward order. Repeat the above problem.
@@ -130,7 +169,7 @@ const sumLists = (l1, l2) => {
   return res;
 };
 
-/* 6. Palindrome - Implement a function to check if a linked list is a palindrome. */
+/* Palindrome - Implement a function to check if a linked list is a palindrome. */
 const isPalindrome = list => {
   let current = list.head, arr = [];
   while (current) {
@@ -143,7 +182,10 @@ const isPalindrome = list => {
   return true;
 };
 
-/* 7. Intersection - Given two singly linked lists, determine if the two lists intersect. Return the intersecting node. Intersection is defined based on reference, not value - if the kth node of the first linked list is the exact same node by reference as the jth node of the second linked list, they are intersecting. */
+/* 7. Intersection - Given two singly linked lists, determine if the two lists intersect.
+Return the intersecting node. Intersection is defined based on reference, not value - if the
+kth node of the first linked list is the exact same node by reference as the jth node of the
+second linked list, they are intersecting. */
 const intersectingLists = (l1, l2) => {
   let l1length = 0, l2length = 0, length, cur1 = l1.head, cur2 = l2.head, tail1, tail2;
   while (cur1 || cur2) {

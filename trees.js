@@ -162,35 +162,26 @@ function _minHeight(node) {
 
 /* 5. Validate BST - Implement a function to check if a binary tree is a binary search tree. */
 const isBST = tree => {
-  let result = true;
-  function _traverseDaTree(node) {
-    if (node.left) {
-      if (node.value > node.left.value)
-        _traverseDaTree(node.left);
-      else {
-        result = false;
-        return;
-      }
-    }
-    if (node.right) {
-      if (node.value < node.right.value)
-        _traverseDaTree(node.right);
-      else {
-        result = false;
-        return;
-      }
-    }
+  const prev = -Infinity;
+
+  function inOrderTraversal(node) {
+    if (node.left) inOrderTraversal(node.left);
+    if (node.value < prev) return false;
+    else prev = node.value;
+    if (node.right) inOrderTraversal(node.right);
+    return true;
   }
-  _traverseDaTree(tree.root);
-  return result;
+
+  return inOrderTraversal(tree.root);
 };
 
 /* 6. Successor - Write an algorithm to find the "next" node (i.e., in-order successor) of a given node in a binary search tree. You may assume that each node has a link to its parent. */
 
 /* 8. First Common Ancestor - Design an algorithm and write code to find the first common ancestor of two nodes in a binary tree. NOTE: This is not necessarily a binary search tree. */
 const firstCommonAncestor = (tree, node1, node2) => {
+  let leftTraverse, rightTraverse;
+
   function _traverseDaTree(node) {
-    let leftTraverse, rightTraverse;
     if (node === node1 || node === node2) return true;
     if (node.left) leftTraverse = _traverseDaTree(node.left);
     if (node.right) rightTraverse = _traverseDaTree(node.right);
@@ -200,6 +191,7 @@ const firstCommonAncestor = (tree, node1, node2) => {
     if (leftTraverse || rightTraverse) return true;
     return false;
   }
+
   return _traverseDaTree(tree.root);
 };
 
@@ -217,3 +209,134 @@ A tree is a subtree of T1 if there exists a node n in T1 such that the subtree o
 /* 11. Random Node - You are implementing a binary tree class from scratch which, in addition to insert, find, and delete, has a method getRandomNode() which returns a random node from the tree. All nodes should be equally likely to be chosen. Design and implement an algorithm for getRandomNode, and explain how you would implement the rest of the methods. */
 
 /* 12. Paths with Sum - You are given a binary tree in which each node contains an integer value (which might be positive or negative). Design an algorithm to count the number of paths that sum to a given value. The path does not need to start or end at the root or a leaf, but it must go downwards (traveling only from parent nodes to child nodes). */
+
+
+
+
+
+
+
+
+
+/* Reconstruct binary tree from post order traversal
+
+        10
+        /\
+       5 15
+      /\  \
+     3  6  19
+     \     /\
+      4   17 20
+
+Post order is right, left, then node.
+4, 3, 6, 5, 17, 20, 19, 15, 10
+
+10 is the root
+1st number bigger than 10 is the right child
+first number smaller than 10 is the left child
+Recursively calculate this for each node
+*/
+
+function reconstruct(arr) {
+  const BST = new BST();
+  BST.root = new Node(arr.pop());
+
+  function buildChildren(arr, node) {
+    if (!arr.length) return;
+    let left = arr, right;
+
+    // To optimize, use binary search instead
+    for (let i = 0; i < arr.length - 1; i++) {
+      if (arr[i] > node.value) {
+        left = arr.slice(0, i);
+        right = arr.slice(i);
+        break;
+      }
+    }
+
+    if (left.length) {
+      node.left = new Node(left.pop());
+      buildChildren(left, node.left);
+    }
+    if (right.length) {
+      node.right = new Node(right.pop());
+      buildChildren(right, node.right);
+    }
+  }
+
+  buildChildren(arr, BST.root);
+  return BST;
+}
+
+
+
+
+
+/* BST Sum: Find all root to leaf nodes in a BST that sum to a given value.
+
+Depth first traversal through BST with sum
+When hit a leaf, if sum = n, return true. Else return false.
+*/
+
+function rootToLeafSum(root, n) {
+  const results = [];
+  _rootToLeafSumHelper(root, n, results)
+  return results;
+}
+
+// Maybe store path as a string instead to avoid creating so many new arrays
+function _rootToLeafSumHelper(node, n, results, current_sum = 0, path = []) {
+  const new_path = path.slice();
+  new_path.push(node.value);
+  if (!node.left && !node.right) {
+    if (n === current_sum) results.push(new_path);
+  }
+  if (node.left) _rootToLeafSumHelper(node.left, n, results, current_sum + node.value, new_path);
+  if (node.right) _rootToLeafSumHelper(node.right, n, results, current_sum + node.value, new_path);
+}
+
+
+
+/*
+Length of longest substring without repeated characters.
+
+g e e k s f o r g e e k s
+
+
+i: 8
+char: g
+
+max: 6
+current: 6
+
+last_index_map = {
+  g: 0,
+  e: 2,
+  k: 3,
+  s: 4,
+  f: 5,
+  o: 6,
+  r: 7,
+}
+
+*/
+
+function longestNonRepeatSubstring(str) {
+  let max = 0, current = 0, start_idx = 0;
+  let last_index_map = {};
+  for (let i = 0; i < str.length; i++) {
+    const char = str[i];
+    if (last_index_map[char] === undefined || last_index_map[char] < start_idx) {
+      current++;
+    }
+    else {
+      current -= (i - last_index_map[char]);
+      start_idx = last_index_map[char] + 1;
+    }
+
+    last_index_map[char] = i;
+    max = Math.max(max, current);
+  }
+  return max;
+}
+longestNonRepeatSubstring('ABDEFGABEF');
